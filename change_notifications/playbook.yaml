@@ -1,0 +1,14 @@
+- name: change to nginx configs should notify the restart
+  hosts: web
+  tasks:
+    - name: change nginx config
+      debug:
+        msg: vi /etc/nginx/conf/nginx.conf
+      notify: restart nginx
+      #changed_when:True overrides the change status to true even there is no change and forces the restart
+      changed_when: True
+  
+  handlers:
+    - name: restart nginx
+      debug:
+        msg: systemctl restart nginx
