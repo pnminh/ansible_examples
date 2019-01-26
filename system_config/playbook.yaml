@@ -1,0 +1,25 @@
+---
+  - name: setup nginx on web
+    hosts: web
+    vars:
+      repo: http://github.com/pnminh
+      version: 8
+    tasks:
+      - name: install nginx
+        debug:
+          msg: install nginx on {{ inventory_hostname }}
+      - name: create web dir if not exists
+        debug:
+          msg: "mkdir ~/web (will not fail if folder already exists"
+      - name: clone repo to web dir
+        debug:
+          msg: "git clone --branch {{ version }} {{repo}} ~/web"
+      - name: setup nginx
+        debug:
+          msg: move nginx config to /etc/nginx/conf
+      - name: start nginx if not start ( will not fail if already started)
+        debug:
+          msg: systemctl start nginx
+      - name: enable nginx on startup
+        debug:
+          msg: systemctl enable nginx
