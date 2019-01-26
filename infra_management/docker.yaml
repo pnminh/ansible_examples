@@ -1,0 +1,35 @@
+---
+  - name: install certain python modules for docker
+    hosts: localhost
+    tasks:
+      - name: install certain python modules for docker
+        pip:
+          name: "{{ item.name }}"
+          version: "{{ item.version }}"
+          state: present
+          extra_args: --user
+        with_items:
+        - { name: docker, version: 2.0.0 }
+  - name: run docker container
+    hosts: localhost
+    tasks:
+      - name: run docker container
+        docker_container:
+          image: busybox
+          command: sleep 1d
+          name: "busybox{{item}}"
+        with_sequence: count=3
+      - name: add docker hosts
+        add_host:
+          name: busybox{{item}}
+          groups: dockers
+          ansible_connection: docker
+        with_sequence: count=3
+  - name: execute command inside docker container
+    hosts: dockers
+    #no python, so gather_facts can cause error
+    gather_facts: False
+    tasks:
+      - name: execute command inside docker
+        raw: echo "hi from $HOSTNAME"
+      
